@@ -385,7 +385,7 @@ class HomeScreenState extends State<HomeScreen> {
             ? 'Flexi · first milestone at 12 hours'
             : 'Flexi · ${stage.title}';
       } else {
-        final goalAt = active!.startAt.add(Duration(minutes: goal));
+        final goalAt = active.startAt.add(Duration(minutes: goal));
         whenLabel = FastingMath.endsAtLabel(
           goalAt,
           now: _now,
