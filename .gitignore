@@ -38,13 +38,16 @@ signing.properties
 # Personal backups / one-time imports — never upload
 *.backup.json
 *backup*.json
+*Backup*.json
 **/exports/
 /backups/
 tavryn_export*.json
 tavryn_data*.json
 tavryn_import*.json
+Tavryn_Backup*
 other_app_fasts.tsv
 enc_export*.json
+*.enc.json
 tools/*.json
 tools/*.tsv
 

@@ -1,5 +1,10 @@
 # Release notes
 
+## 1.0.1+2
+
+- Fast alerts fire at the scheduled time, including while the phone is idle
+- Export suggests `Tavryn_Backup_YYYY-MM-DD_HH-MM-SS` (`.json`, or `.enc.json` when PIN-protected)
+
 ## 1.0.0+1
 
 First release of Tavryn, a local-only intermittent fasting timer.

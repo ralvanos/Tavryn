@@ -1,6 +1,6 @@
 # Tavryn
 
-**Version:** 1.0.0+1 — see [RELEASE_NOTES.md](RELEASE_NOTES.md).
+**Version:** 1.0.1+2 — see [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
 An **Android-only**, **offline** intermittent fasting timer. Tavryn does one job: start, watch, edit, and remember your fasts. No accounts, no ads, no weight/calorie extras. All data stays on your device and is encrypted at rest.
 
@@ -15,10 +15,10 @@ An **Android-only**, **offline** intermittent fasting timer. Tavryn does one job
 * **Eating window** — after a timed fast ends, see the countdown and next-fast clock time
 * **Fasting timeline** — bottom sheet, 12h through 3–5 days, guidance-only stage copy
 * **Trends** — streaks, longest, total, hit-goal %, averages, session counts, days fasted, week/month/year, weekly chart, 12-week heatmap
-* **Notifications** — optional local reminders for daily start, goal reached, eating-window end, and stage milestones
+* **Notifications** — optional local reminders for daily start, goal reached, eating-window end, and stage milestones. They are scheduled for the exact time, including while the phone is idle
 * **On-device encryption** — AES-CBC user-data blob; DEK in Android Keystore via `flutter_secure_storage`
 * **Optional PIN lock** — 4–6 digit PIN; auto-lock Immediate / 30s / 1m / 5m; salted hash only
-* **Backup & restore** — More → Import / Export. PIN-protect is optional on export (`enc_export_v1`)
+* **Backup & restore** — More → Import / Export. The suggested name is `Tavryn_Backup_YYYY-MM-DD_HH-MM-SS` (`.json`, or `.enc.json` when PIN-protected). PIN-protect is optional on export (`enc_export_v1`)
 
 ## Why these extras
 
@@ -35,6 +35,13 @@ Weight, water, photos, calories, and meal logging were left out on purpose. Ther
 * Flutter SDK (stable channel)
 * Android SDK
 * Android device or emulator
+
+## Tested on
+
+1.0.1+2 was tested on:
+
+- Samsung Galaxy S23
+- Google Pixel 8
 
 Android-only. No backend. iOS / desktop / web folders are not maintained.
 
@@ -64,7 +71,7 @@ These stay on your machine (see `.gitignore`):
 
 * `android/key.properties` and `*.jks` / `*.keystore`
 * `*.apk` / `*.aab`
-* Backup and import files (`*backup*.json`, `tavryn_import*.json`, `tools/*.json`, `tools/*.tsv`)
+* Backup and import files (`Tavryn_Backup*`, `*backup*.json`, `*.enc.json`, `tavryn_import*.json`, `tools/*.json`, `tools/*.tsv`)
 
 `tools/merge_fasts.py` is a generic TSV→JSON helper with no user data. Do not commit the JSON/TSV it reads or writes.
 
