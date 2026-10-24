@@ -301,6 +301,20 @@ void main() {
     });
   });
 
+  group('FastStorage export file name', () {
+    test('uses Tavryn_Backup and a local timestamp', () {
+      final now = DateTime(2026, 10, 23, 15, 4, 7);
+      expect(
+        FastStorage.exportFileName(now: now),
+        'Tavryn_Backup_2026-10-23_15-04-07.json',
+      );
+      expect(
+        FastStorage.exportFileName(now: now, encrypted: true),
+        'Tavryn_Backup_2026-10-23_15-04-07.enc.json',
+      );
+    });
+  });
+
   group('FastStorage import', () {
     test('rejects future schema', () {
       final result = FastStorage.validateImportMap({

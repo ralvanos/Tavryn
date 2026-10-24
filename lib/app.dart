@@ -26,6 +26,9 @@ class _TavrynAppState extends State<TavrynApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadPinState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FastStorage.ensureExactAlarms();
+    });
   }
 
   @override

@@ -34,12 +34,14 @@ Optional actions may open external apps (for example, your email client for feed
 
 ## Notifications
 
-If you enable reminders, the app schedules local notifications on your device only. No notification data is sent to third parties.
+If you enable reminders, the app schedules local notifications on your device only. No notification data is sent to third parties. Reminders use exact alarms so they fire at the scheduled time, including while the phone is idle.
 
 ## Permissions
 
 - **Notifications** — optional, for fasting reminders
+- **Exact alarms** — so a reminder fires at the scheduled time, including while the phone is idle
 - **Boot completed** — reschedule local reminders after device restart
+- **Vibrate** — vibration for those reminders
 - **Storage / file picker** — only when you export or import a backup
 
 The release APK does not request network access.

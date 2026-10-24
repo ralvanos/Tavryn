@@ -135,6 +135,26 @@ class FastStorage {
     await rescheduleNotifications();
   }
 
+  /// Confirms the app may schedule exact alarms, and rebuilds pending alerts
+  /// if the user has to grant that access.
+  ///
+  /// Call this after the Android activity exists. Notification setup runs
+  /// before [runApp], when a settings screen cannot be opened.
+  static Future<void> ensureExactAlarms() async {
+    final androidPlugin =
+        _notificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin == null) return;
+    try {
+      final canExact = await androidPlugin.canScheduleExactNotifications();
+      if (canExact != false) return;
+      final granted = await androidPlugin.requestExactAlarmsPermission();
+      if (granted == true) await rescheduleNotifications();
+    } catch (e) {
+      debugPrint('Exact alarm permission check skipped: $e');
+    }
+  }
+
   static Future<List<FastRecord>> getFasts() async {
     final raw = await _store.getString(keyFasts);
     if (raw == null || raw.isEmpty) return [];
@@ -492,22 +512,33 @@ class FastStorage {
     };
   }
 
+  /// Suggested save name, e.g. `Tavryn_Backup_2026-10-23_15-26-04.json`.
+  ///
+  /// PIN-protected files use `.enc.json`. [now] is read as local clock fields.
+  @visibleForTesting
+  static String exportFileName({DateTime? now, bool encrypted = false}) {
+    final clock = now ?? DateTime.now();
+    String two(int n) => n.toString().padLeft(2, '0');
+    final stamp = '${clock.year.toString().padLeft(4, '0')}-'
+        '${two(clock.month)}-${two(clock.day)}_'
+        '${two(clock.hour)}-${two(clock.minute)}-${two(clock.second)}';
+    final extension = encrypted ? '.enc.json' : '.json';
+    return 'Tavryn_Backup_$stamp$extension';
+  }
+
   static Future<ExportResult> exportData({String? passphrase}) async {
     try {
       final data = await buildExportMap();
+      final fileName = exportFileName(encrypted: passphrase != null);
       final String jsonString;
-      final String fileName;
-
       if (passphrase != null) {
         final envelope = ExportCrypto.encryptExport(
           plaintextJson: jsonEncode(data),
           passphrase: passphrase,
         );
         jsonString = jsonEncode(envelope);
-        fileName = 'tavryn_data.enc.json';
       } else {
         jsonString = jsonEncode(data);
-        fileName = 'tavryn_data.json';
       }
 
       final path = await FilePicker.saveFile(
@@ -865,16 +896,20 @@ class FastStorage {
       channelDescription: 'Start, end, and stage reminders for your fast',
       importance: Importance.high,
       priority: Priority.high,
+      category: AndroidNotificationCategory.alarm,
+      visibility: NotificationVisibility.public,
     );
     const notificationDetails = NotificationDetails(android: androidDetails);
 
+    // Inexact idle alarms are batched by Android and commonly arrive about
+    // 15 minutes late. Fasting alerts have to fire at the scheduled instant.
     await _notificationsPlugin.zonedSchedule(
       id: id,
       title: title,
       body: body,
       scheduledDate: scheduledDate,
       notificationDetails: notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: match,
     );
   }
